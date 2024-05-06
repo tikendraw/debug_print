@@ -1,6 +1,6 @@
 import sys
 from typing import Any, Callable, Dict, Optional
-from rich import rprint
+from rich import print as rprint
 
 # Set the default value for PRINT_ENABLED
 PRINT_ENABLED = True
