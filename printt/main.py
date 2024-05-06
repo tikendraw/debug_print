@@ -29,7 +29,7 @@ def get_var_size(x):
     return get_human_readable_size(sys.getsizeof(x))
 
     
-def dprint(x: Any, print_variable: bool = True) -> None:
+def printt(x: Any, print_variable: bool = True) -> None:
     """Prints details about a variable."""
     global PRINT_ENABLED  # Declare the global variable within the function
 
@@ -64,10 +64,10 @@ def dprint(x: Any, print_variable: bool = True) -> None:
 
     rprint()
 
-def enable_dprint():
+def enable_printt():
     global PRINT_ENABLED
     PRINT_ENABLED = True
 
-def disable_dprint():
+def disable_printt():
     global PRINT_ENABLED
     PRINT_ENABLED = False
