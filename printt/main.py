@@ -1,16 +1,15 @@
 import sys
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict
 from rich import print as rprint
-
+import inspect
 # Set the default value for PRINT_ENABLED
 PRINT_ENABLED = True
 
-def get_var_name(var: Any) -> Optional[str]:
-    """Get the name of a variable."""
-    for name, val in globals().items():
-        if val is var:
-            return name
-    return None
+
+def get_var_name(var):
+    frame = inspect.currentframe().f_back
+    return [name for name, val in frame.f_locals.items() if val is var][0]
+
 
 def get_human_readable_size(num_bytes: int) -> str:
     """Convert the number of bytes to a human-readable string."""
@@ -24,12 +23,10 @@ def get_human_readable_size(num_bytes: int) -> str:
 
     return f"{size:.2f} {units[unit_index]}"
 
-
 def get_var_size(x):
     return get_human_readable_size(sys.getsizeof(x))
 
-    
-def printt(x: Any, print_variable: bool = True) -> None:
+def printt(x: Any, print_variable: bool = True, include_methods: bool = False) -> None:
     """Prints details about a variable."""
     global PRINT_ENABLED  # Declare the global variable within the function
 
@@ -38,7 +35,7 @@ def printt(x: Any, print_variable: bool = True) -> None:
 
     just_print: Dict[str, Any] = {
         "name": get_var_name(x),
-        "variable": x if print_variable else "print variable is disabled",
+        "value": x if print_variable else "print variable is disabled",
         "class": x.__class__.__name__,
     }
 
@@ -54,13 +51,21 @@ def printt(x: Any, print_variable: bool = True) -> None:
         "Memory Usage": get_var_size
     }
 
+    if include_methods:
+        use_try["Methods"] = dir
+
     for key, func in use_try.items():
         try:
-            rprint(f"[bold magenta]{key:15} ::[/bold magenta] {func(x)}")
+            if callable(func):
+                result = func(x)
+            else:
+                result = func
+            rprint(f"[bold magenta]{key:15} ::[/bold magenta] {result}")
             rprint("-" * 60)
         except Exception as e:
             rprint(f"[bold red]{key:15} ::[/bold red] not printed due to {e} !!!")
             rprint("-" * 60)
+            # pass
 
     rprint()
 
